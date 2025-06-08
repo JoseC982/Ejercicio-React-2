@@ -2,7 +2,7 @@ import {useState} from "react";
 import "./Restaurante.css";
 function Restaurante (props){
     
-    const {nombre, direccion, tipo, UrlImagen, SumarLikes,RestarDislikes, reputacion}= props;
+    const {index, nombre, direccion, tipo, UrlImagen, SumarLikes,RestarDislikes, reputacion, eliminarRestaurante}= props;
 
     const [preferencias, setPreferencias] = useState({
         likes: 0,
@@ -48,7 +48,9 @@ function Restaurante (props){
         });
         RestarDislikes();
     }
-    
+
+
+ 
     return (
         <div className="Restaurante">
             <img src={UrlImagen} alt="" />
@@ -60,6 +62,7 @@ function Restaurante (props){
             <h4>No me gusta:{preferencias.dislikes}</h4>
             <button onClick={handlerLike}>👍</button>
             <button onClick={handlerDislike}>👎</button>
+            <button onClick={() => eliminarRestaurante(index)}>eliminar</button>
             
         </div>  
     );      
