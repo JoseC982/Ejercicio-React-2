@@ -51,15 +51,15 @@ function ListaRestaurantes({
       {mensajeErrorLikesNegativos && (
         <h2 style={{ color: "red" }}>{mensajeErrorLikesNegativos}</h2>
       )}
-      {restaurantes.map((restaurante, index) => (
+      {restaurantes.map((restaurantes, index) => (
         <Restaurante
           key={index}
-          index={index}
-          nombre={restaurante.nombre}
-          direccion={restaurante.direccion}
-          tipo={restaurante.tipo}
-          reputacion={restaurante.reputacion}
-          UrlImagen={restaurante.UrlImagen}
+          id={restaurantes.id}
+          nombre={restaurantes.nombre}
+          direccion={restaurantes.direccion}
+          tipo={restaurantes.tipo}
+          reputacion={restaurantes.reputacion}
+          UrlImagen={restaurantes.UrlImagen}
           SumarLikes={SumarLikes}
           RestarDislikes={RestarDislikes}
           mensajeErrorLikesNegativo={mensajeErrorLikesNegativo}

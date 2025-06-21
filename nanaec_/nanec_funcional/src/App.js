@@ -3,52 +3,55 @@ import './App.css';
 import ListaRestaurantes from "./Componentes/ListaRestaurantes";
 import CrearRestaurante from "./Componentes/CrearRestaurante";
 import Inicio from './Componentes/Inicio';
-import React, { useState } from 'react';
+import EditarRestaurante from './Componentes/EditarRestaurante';
+import React, { useState, useEffect } from 'react';
+import LstRestJSon from './Componentes/ListaRestaurantesJSon';
+import axios from 'axios';
 
 function App() {
-  // Mueve el estado aquí
-  const [restaurantes, setRestaurantes] = useState([
-    {
-      nombre: "El Redil",
-      direccion: "Shyris y Matamoros",
-      tipo: "Tradicional",
-      reputacion: 1,
-      UrlImagen:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkGTV9ptpoJ1nv8SE8QJ_A4-pCjnd46axWiA&s",
-    },
-    {
-      nombre: "Cafeteria",
-      direccion: "Julio Cesar Villacres y N68F",
-      tipo: "Cafeteria",
-      reputacion: 2,
-      UrlImagen:
-        "https://th.bing.com/th/id/OIP.HXhKQnE0QlerZWTn5b27_gHaE8?w=274&h=183&c=7&r=0&o=5&pid=1.7",
-    },
-    {
-      nombre: "Restaurante los Pedrosa",
-      direccion: "Presa y Zamora",
-      tipo: "Comida Rápida",
-      reputacion: 5,
-      UrlImagen:
-        "https://th.bing.com/th/id/OIP.Lq4y_ACmvY-av-0cmcxQeQHaE7?w=287&h=191&c=7&r=0&o=5&pid=1.7",
-    },
-  ]);
+  // Estado vacío, los datos se cargarán desde el backend
+  const [restaurantes, setRestaurantes] = useState([]);
   const [state, setState] = useState({
+    id: "",
     nombre: "",
     direccion: "",
     tipo: "",
     reputacion: "",
     UrlImagen: "",
   });
+
+  // Cargar restaurantes desde el backend al montar el componente
+  useEffect(() => {
+    getRestaurante();
+  }, []);
+
+  const getRestaurante = () => {
+    axios.get('http://localhost:3001/Restaurantes')
+      .then(response => setRestaurantes(response.data))
+      .catch(error => console.error("Error cargando restaurantes:", error));
+  }
+
   const agregarRestaurante = (nuevoRestaurante) => {
-    setRestaurantes((prev) => [...prev, nuevoRestaurante]);
+    axios.post('http://localhost:3001/Restaurantes', nuevoRestaurante)
+      .then(response => setRestaurantes((prev) => [...prev, response.data]))
+      .catch(error => console.error("Error cargando restaurantes:", error));
   };
 
-  const eliminarRestaurante = (index) => {
-    console.log("Item seleccionado", index);
-    setRestaurantes((prev) =>
-      prev.filter((restaurante, i) => i !== index)
-    );
+  const eliminarRestaurante = (id) => {
+    axios.delete('http://localhost:3001/Restaurantes/' + id)
+      .then(() => setRestaurantes((prev) => prev.filter(r => r.id !== id)))
+      .catch(error => console.error("Error eliminando restaurantes:", error));
+  };
+
+  const editRestaurante = (restauranteActualizado) => {
+    console.log("El id a actualizar es: ", restauranteActualizado.id);
+    axios.put('http://localhost:3001/Restaurantes/' + restauranteActualizado.id, restauranteActualizado)
+      .then(response => {
+        setRestaurantes(prevrestaurantes => prevrestaurantes.map(rest =>
+          rest.id === restauranteActualizado.id ? response.data : rest
+        ));
+      })
+      .catch(error => console.error("Error actualizando restaurante:", error));
   };
 
   return (
@@ -70,10 +73,18 @@ function App() {
               <ListaRestaurantes
                 restaurantes={restaurantes}
                 eliminarRestaurante={eliminarRestaurante}
-
               />
             }
           ></Route>
+          <Route path="/lstRest" element={<LstRestJSon />} />
+          <Route path="/editRest/:id" element=
+            {<EditarRestaurante
+              state={state}
+              setState={setState}
+              editRestaurante={editRestaurante}
+            />
+            } />
+
         </Routes>
       </BrowserRouter>
     </div>
@@ -81,4 +92,3 @@ function App() {
 }
 
 export default App;
-

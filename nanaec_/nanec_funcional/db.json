@@ -1,0 +1,86 @@
+{
+  "Restaurantes": [
+    {
+      "id": "3",
+      "nombre": "Restaurante los Pedrosa",
+      "direccion": "Presa y Zamora",
+      "tipo": "Comida Rápida",
+      "reputacion": 5,
+      "UrlImagen": "https://th.bing.com/th/id/OIP.Lq4y_ACmvY-av-0cmcxQeQHaE7?w=287&h=191&c=7&r=0&o=5&pid=1.7"
+    },
+    {
+      "id": "4",
+      "nombre": "Los pollos hermanos",
+      "direccion": "Presa y Zamora",
+      "tipo": "Comida Rápida",
+      "reputacion": 5,
+      "UrlImagen": "https://th.bing.com/th/id/OIP.Lq4y_ACmvY-av-0cmcxQeQHaE7?w=287&h=191&c=7&r=0&o=5&pid=1.7"
+    },
+    {
+      "id": "5",
+      "nombre": "Los tios",
+      "direccion": "Presa y Zamora",
+      "tipo": "Comida Rápida",
+      "reputacion": 5,
+      "UrlImagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRimuM9tYhxMyVlEGuqPp3EYd_QIfqTKOOtVQ&s"
+    },
+    {
+      "id": "6",
+      "nombre": "KFC",
+      "direccion": "Calderon",
+      "tipo": "Mexicana",
+      "reputacion": "4",
+      "UrlImagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbqjPqjigJwHu4VvBHRbIMuIO7TD9qgiE-kw&s"
+    },
+    {
+      "id": "c292",
+      "nombre": "El hornero",
+      "direccion": "Carapungo",
+      "tipo": "Italiana",
+      "reputacion": "4",
+      "UrlImagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZKc0pzECZ9en27cYmpR5VrHKrW-_bz_HDPg&s"
+    },
+    {
+      "id": "7",
+      "nombre": "Menestras del negro",
+      "direccion": "Portal shopping",
+      "tipo": "Mexicana",
+      "reputacion": "4",
+      "UrlImagen": "https://img.goraymi.com/2022/03/14/93f9880d2dbeba2c91e465f07458f6a2_xl.jpg"
+    }
+  ],
+  "Clientes": [
+    {
+      "id": "1",
+      "nombre": "Juan",
+      "apellido": "Pérez",
+      "direccion": "Shyris y Matamoros",
+      "email": "juan.perez@email.com",
+      "telefono": "0999999999"
+    },
+    {
+      "id": "2",
+      "nombre": "Ana",
+      "apellido": "García",
+      "direccion": "Julio Cesar Villacres y N68F",
+      "email": "ana.garcia@email.com",
+      "telefono": "0988888888"
+    },
+    {
+      "id": "3",
+      "nombre": "Carlos",
+      "apellido": "Pedrosa",
+      "direccion": "Presa y Zamora",
+      "email": "carlos.pedrosa@email.com",
+      "telefono": "0977777777"
+    },
+    {
+      "id": "4",
+      "nombre": "Lucía",
+      "apellido": "Hermanos",
+      "direccion": "Presa y Zamora",
+      "email": "lucia.hermanos@email.com",
+      "telefono": "0966666666"
+    }
+  ]
+}
