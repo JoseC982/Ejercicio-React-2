@@ -29,10 +29,12 @@ function CrearRestaurante(props) {
 
     return (
         <div className="CrearRestaurante">
-            <p>Se utiliza el hook useNavigate</p>
+            {/*<p>Se utiliza el hook useNavigate</p>*/}
             <button onClick={handleInicio}>Volver al Inicio</button>
+            <br />
             <button onClick={handleLista}>Ver lista</button>
-            <br /><br />
+            <br />
+            {/*
             <p>Se utiliza Link</p>
             <Link to="/">
                 <button>Volver al Inicio</button>
@@ -53,10 +55,10 @@ function CrearRestaurante(props) {
                 onChange={(e) => props.setState({ ...props.state, tipo: e.target.value })}
             >
                 <option value="">Seleccione un tipo</option>
-                <option value="Italiana">Italiana</option>
-                <option value="China">China</option>
-                <option value="Mexicana">Mexicana</option>
-                <option value="Japonesa">Japonesa</option>
+                <option value="Tradicional">Tradicional</option>
+                <option value="Cafeteria">Cafeteria</option>
+                <option value="Desayunos">Desayunos</option>
+                <option value="Vegana">Vegana</option>
                 <option value="Vegetariana">Vegetariana</option>
             </select>
             <label>Reputación:</label>

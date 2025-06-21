@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import ListaRestaurantes from "./Componentes/ListaRestaurantes";
 import CrearRestaurante from "./Componentes/CrearRestaurante";
+import ComponenteAxios from './Componentes/ComponeteAxios';
 import Inicio from './Componentes/Inicio';
 import EditarRestaurante from './Componentes/EditarRestaurante';
 import React, { useState, useEffect } from 'react';

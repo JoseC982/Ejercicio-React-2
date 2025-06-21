@@ -39,14 +39,17 @@ function ListaRestaurantes({
 
   return (
     <div className="ListaRestaurantes">
-      <p>Se utiliza el hook useNavigate</p>
+      {/*<p>Se utiliza el hook useNavigate</p>*/}
       <button onClick={handleInicio}>Volver al incio</button>
+      <br /><br />
       <button onClick={handleCrear}>Crear un nuevo Restaurante</button>
       <br /><br />
+      {/*
       <p>Se utiliza Link</p>
       <Link to="/">
         <button>Volver al Inicio</button>
       </Link>
+      */}
       <h1>Cantidad likes: {likesTotales}</h1>
       {mensajeErrorLikesNegativos && (
         <h2 style={{ color: "red" }}>{mensajeErrorLikesNegativos}</h2>
