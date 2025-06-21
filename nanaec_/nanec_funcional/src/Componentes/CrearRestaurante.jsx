@@ -34,7 +34,6 @@ function CrearRestaurante(props) {
             <br />
             <button onClick={handleLista}>Ver lista</button>
             <br />
-            {/*
             <p>Se utiliza Link</p>
             <Link to="/">
                 <button>Volver al Inicio</button>
@@ -55,21 +54,21 @@ function CrearRestaurante(props) {
                 onChange={(e) => props.setState({ ...props.state, tipo: e.target.value })}
             >
                 <option value="">Seleccione un tipo</option>
-                <option value="Tradicional">Tradicional</option>
-                <option value="Cafeteria">Cafeteria</option>
-                <option value="Desayunos">Desayunos</option>
-                <option value="Vegana">Vegana</option>
+                <option value="Italiana">Italiana</option>
+                <option value="China">China</option>
+                <option value="Mexicana">Mexicana</option>
+                <option value="Japonesa">Japonesa</option>
                 <option value="Vegetariana">Vegetariana</option>
             </select>
             <label>Reputación:</label>
             <input type="number" value={props.state.reputacion} onChange={(e) => props.setState({ ...props.state, reputacion: e.target.value })} />
             <label>URL Imagen:</label>
-            <input type="text" value={props.state.UrlImagen} onChange={(e) => props.setState({ ...props.state, UrlImagen: e.target.value })} />
+            <input type="text" value={props.state.UrlImagen} onChange={(e)=> props.setState({...props.state,UrlImagen: e.target.value})}/>
             <button onClick={handlerInsertar}>Insertar</button>
-
-        </div>
-    );
-
+            
+        </div>  
+    );      
+    
 }
 
 export default CrearRestaurante;
