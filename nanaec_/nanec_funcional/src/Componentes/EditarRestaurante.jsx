@@ -44,7 +44,7 @@ function EditarRest(props) {
 
     // Función para obtener el restaurante por id
     const getRestauranteXid = () => {
-        axios.get('http://localhost:3001/Restaurantes/' + id)
+        axios.get('http://localhost:3001/restaurantes/' + id)
             .then(response => {
                 setRestaurante(response.data); // Actualizar el estado con los datos del restaurante
             })

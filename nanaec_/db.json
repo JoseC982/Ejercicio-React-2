@@ -2,10 +2,10 @@
   "restaurantes": [
     {
       "id": "1",
-      "nombre": "El Redil",
-      "direccion": "Shyris y Matamoros",
-      "tipo": "Tradicional",
-      "reputacion": 1,
+      "nombre": "El Redilassacc",
+      "direccion": "Shyris ",
+      "tipo": "China",
+      "reputacion": "5",
       "UrlImagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkGTV9ptpoJ1nv8SE8QJ_A4-pCjnd46axWiA&s"
     },
     {

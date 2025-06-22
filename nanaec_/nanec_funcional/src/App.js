@@ -27,26 +27,26 @@ function App() {
   }, []);
 
   const getRestaurante = () => {
-    axios.get('http://localhost:3001/Restaurantes')
+    axios.get('http://localhost:3001/restaurantes')
       .then(response => setRestaurantes(response.data))
       .catch(error => console.error("Error cargando restaurantes:", error));
   }
 
   const agregarRestaurante = (nuevoRestaurante) => {
-    axios.post('http://localhost:3001/Restaurantes', nuevoRestaurante)
+    axios.post('http://localhost:3001/restaurantes', nuevoRestaurante)
       .then(response => setRestaurantes((prev) => [...prev, response.data]))
       .catch(error => console.error("Error cargando restaurantes:", error));
   };
 
   const eliminarRestaurante = (id) => {
-    axios.delete('http://localhost:3001/Restaurantes/' + id)
+    axios.delete('http://localhost:3001/restaurantes/' + id)
       .then(() => setRestaurantes((prev) => prev.filter(r => r.id !== id)))
       .catch(error => console.error("Error eliminando restaurantes:", error));
   };
 
   const editRestaurante = (restauranteActualizado) => {
     console.log("El id a actualizar es: ", restauranteActualizado.id);
-    axios.put('http://localhost:3001/Restaurantes/' + restauranteActualizado.id, restauranteActualizado)
+    axios.put('http://localhost:3001/restaurantes/' + restauranteActualizado.id, restauranteActualizado)
       .then(response => {
         setRestaurantes(prevrestaurantes => prevrestaurantes.map(rest =>
           rest.id === restauranteActualizado.id ? response.data : rest
