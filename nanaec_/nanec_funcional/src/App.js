@@ -11,6 +11,7 @@ import axios from 'axios';
 
 function App() {
   // Estado vacío, los datos se cargarán desde el backend
+  const baseURL = "http://localhost:8000/";
   const [restaurantes, setRestaurantes] = useState([]);
   const [state, setState] = useState({
     id: "",
@@ -27,19 +28,20 @@ function App() {
   }, []);
 
   const getRestaurante = () => {
-    axios.get('http://localhost:3001/restaurantes')
+    axios.get(baseURL + "restaurantes")
       .then(response => setRestaurantes(response.data))
       .catch(error => console.error("Error cargando restaurantes:", error));
   }
 
   const agregarRestaurante = (nuevoRestaurante) => {
-    axios.post('http://localhost:3001/restaurantes', nuevoRestaurante)
+    axios.post(baseURL + "restaurantes", nuevoRestaurante)
       .then(response => setRestaurantes((prev) => [...prev, response.data]))
       .catch(error => console.error("Error cargando restaurantes:", error));
   };
 
   const eliminarRestaurante = (id) => {
-    axios.delete('http://localhost:3001/restaurantes/' + id)
+    console.log("El id a eliminar es: ", id);
+    axios.delete(baseURL + "restaurantes/" + id)
       .then(() => setRestaurantes((prev) => prev.filter(r => r.id !== id)))
       .catch(error => console.error("Error eliminando restaurantes:", error));
   };

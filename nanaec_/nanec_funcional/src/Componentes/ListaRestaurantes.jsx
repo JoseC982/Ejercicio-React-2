@@ -8,6 +8,7 @@ function ListaRestaurantes({
 }) {
   const [mensajeErrorLikesNegativos, setMensajeErrorLikesNegativos] = useState("");
   const [likesTotales, setLikesTotales] = useState(0);
+  console.log(restaurantes);
 
   const SumarLikes = () => setLikesTotales((prev) => prev + 1);
 
@@ -57,7 +58,7 @@ function ListaRestaurantes({
       {restaurantes.map((restaurantes, index) => (
         <Restaurante
           key={index}
-          id={restaurantes.id}
+          id={restaurantes._id}   //aqui se actualizo de id a _id porque eso es lo que retorna de la bdd
           nombre={restaurantes.nombre}
           direccion={restaurantes.direccion}
           tipo={restaurantes.tipo}
