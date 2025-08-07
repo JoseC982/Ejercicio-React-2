@@ -3,9 +3,17 @@ require("dotenv").config();             // Importa el módulo dotenv para cargar
 const jwt = require("jsonwebtoken");    // Importa la biblioteca jwt para generar tokens
 const bcrypt = require("bcryptjs");     // Importa la biblioteca bcrypt para encriptar contraseñas
 
-// Aqui se crea el token
-const generateToken = (id) => {      // Al token se le puede enviar los atributos que creamos necesarios
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' })
+// Aquí se crea el token
+const generateToken = (user) => {
+    return jwt.sign(
+        { 
+            id: user._id,        // Cambio de _id a id
+            email: user.email,
+            rol: user.rol
+        }, 
+        process.env.JWT_SECRET, 
+        { expiresIn: '30d' }
+    );
 }   //aqui se añade el tiempo de expiracion
 
 // Registro
@@ -35,34 +43,54 @@ module.exports.createUser = async (request, response) => {
 }
 
 
-// Login
+// Corregir el loginUser
 module.exports.loginUser = async (req, res) => {
-    const { email, password } = req.body;
-    const userFound = await User.findOne({ where: { email: email }});
-    console.log(password, userFound.password);
-    if (userFound && (await bcrypt.compare(password, userFound.password))) {
-        console.log(password, userFound.password);
-        res.json({ message: 'Login User', email: userFound.email, nombre: userFound.nombre, token: generateToken(userFound._id) })
-    } else {
-        res.status(400).json({ message: 'Login Failed' })
+    try {
+        const { email, password } = req.body;
+        const userFound = await User.findOne({ where: { email: email }});
+        
+        if (!userFound) {
+            return res.status(400).json({ message: 'Usuario no encontrado' });
+        }
+        
+        console.log('Password ingresado:', password);
+        console.log('Password en BD:', userFound.password);
+        console.log('ID del usuario:', userFound._id); // Cambiar de userFound.id a userFound._id
+        
+        if (await bcrypt.compare(password, userFound.password)) {
+            const token = generateToken(userFound);
+            
+            res.json({ 
+                message: 'Login exitoso', 
+                email: userFound.email, 
+                nombre: userFound.nombre,
+                rol: userFound.rol,
+                token: token 
+            });
+        } else {
+            res.status(400).json({ message: 'Contraseña incorrecta' });
+        }
+    } catch (error) {
+        console.error('Error en login:', error);
+        res.status(500).json({ message: 'Error interno del servidor' });
     }
 }
 
-
+// Corregir getAllUsuarios
 module.exports.getAllUsuarios = async (req, res) => {
     try {
-        const usuarios = await Usuario.findAll();
+        const usuarios = await User.findAll(); // Cambiar Usuario por User
         res.status(200).json(usuarios);
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener los usuarios', error: error.message });
     }
 }
 
-
+// Corregir getUsuarioById
 module.exports.getUsuarioById = async (req, res) => {
     try {
         const { id } = req.params;
-        const usuario = await Usuario.findByPk(id);
+        const usuario = await User.findOne({ where: { _id: id } }); // Usar _id y User
 
         if (!usuario) {
             return res.status(404).json({ message: `Usuario con ID ${id} no encontrado.` });
@@ -73,35 +101,21 @@ module.exports.getUsuarioById = async (req, res) => {
     }
 }
 
-
+// Corregir updateUsuario
 module.exports.updateUsuario = async (req, res) => {
     try {
         const { id } = req.params;
-        const [updatedRowsCount, updatedUsuarios] = await Usuario.update(req.body, {
-            where: { _id: id },
-            returning: true, // Necesario para obtener el objeto actualizado en PostgreSQL, pero no en MySQL
-            plain: true // Para MySQL, esto ayuda a obtener el objeto actualizado si 'returning' no funciona directamente
+        const [updatedRowsCount] = await User.update(req.body, { // Usar User
+            where: { _id: id }
         });
 
         if (updatedRowsCount === 0) {
             return res.status(404).json({ message: `Usuario con ID ${id} no encontrado para actualizar.` });
         }
 
-        // Para MySQL, si 'returning: true' no devuelve el objeto actualizado directamente,
-        // puedes hacer una nueva consulta para obtenerlo.
-        const usuarioActualizado = await Usuario.findByPk(id);
+        const usuarioActualizado = await User.findOne({ where: { _id: id } });
         res.status(200).json(usuarioActualizado);
     } catch (error) {
-        if (error.name === 'SequelizeValidationError') {
-            const errors = error.errors.map(err => ({
-                field: err.path,
-                message: err.message
-            }));
-            return res.status(400).json({ message: 'Error de validación al actualizar', errors });
-        }
-        if (error.name === 'SequelizeUniqueConstraintError') {
-            return res.status(409).json({ message: 'El email ya está registrado por otro usuario.', field: 'email' });
-        }
         res.status(500).json({ message: 'Error al actualizar el usuario', error: error.message });
     }
 }

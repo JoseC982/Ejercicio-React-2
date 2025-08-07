@@ -23,6 +23,7 @@ module.exports.getAllRestaurantes = async (_, response) => {
     try {
         const restaurantes = await Restaurante.findAll()
         response.json(restaurantes)
+        console.log(restaurantes)
     } catch (err) {
         response.status(500).json(err);
     }

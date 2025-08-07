@@ -6,13 +6,15 @@ import ComponenteAxios from './Componentes/ComponeteAxios';
 import Login from './Componentes/Login';
 import Inicio from './Componentes/Inicio';
 import EditarRestaurante from './Componentes/EditarRestaurante';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import LstRestJSon from './Componentes/ListaRestaurantesJSon';
+import InicioUsuario from './Componentes/inicioUsuario';
+import ProtectedRoute from './Componentes/ProtectedRoute';
 import axios from 'axios';
 
 function App() {
-  // Estado vacío, los datos se cargarán desde el backend
   const baseURL = "http://localhost:8000/";
+
   const [restaurantes, setRestaurantes] = useState([]);
   const [state, setState] = useState({
     id: "",
@@ -23,33 +25,46 @@ function App() {
     UrlImagen: "",
   });
 
-  // Cargar restaurantes desde el backend al montar el componente
-  useEffect(() => {
-    getRestaurante();
-  }, []);
-
   const getRestaurante = () => {
-    axios.get(baseURL + "restaurantes")
-      .then(response => setRestaurantes(response.data))
-      .catch(error => console.error("Error cargando restaurantes:", error));
-  }
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+    };
 
-  const agregarRestaurante = (nuevoRestaurante) => {
-    axios.post(baseURL + "restaurantes", nuevoRestaurante)
-      .then(response => setRestaurantes((prev) => [...prev, response.data]))
+    axios.get(baseURL + "restaurantes", config)
+      .then(response => setRestaurantes(response.data))
       .catch(error => console.error("Error cargando restaurantes:", error));
   };
 
+  const agregarRestaurante = (nuevoRestaurante) => {
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+
+    axios.post(baseURL + "restaurantes", nuevoRestaurante, config)
+      .then(response => setRestaurantes((prev) => [...prev, response.data]))
+      .catch(error => console.error("Error creando restaurante:", error));
+  };
+
   const eliminarRestaurante = (id) => {
-    console.log("El id a eliminar es: ", id);
-    axios.delete(baseURL + "restaurantes/" + id)
-      .then(() => setRestaurantes((prev) => prev.filter(r => r.id !== id)))
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+
+    axios.delete(baseURL + "restaurantes/" + id, config)
+      .then(() => setRestaurantes((prev) => prev.filter(r => r._id !== id))) // Cambió de r.id a r._id
       .catch(error => console.error("Error eliminando restaurantes:", error));
   };
 
   const editRestaurante = (restauranteActualizado) => {
-    console.log("El id a actualizar es: ", restauranteActualizado.id);
-    axios.put('http://localhost:3001/restaurantes/' + restauranteActualizado.id, restauranteActualizado)
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+
+    axios.put(baseURL + "restaurantes/" + restauranteActualizado.id, restauranteActualizado, config)
       .then(response => {
         setRestaurantes(prevrestaurantes => prevrestaurantes.map(rest =>
           rest.id === restauranteActualizado.id ? response.data : rest
@@ -62,34 +77,77 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Inicio />} />
-          <Route path="/login" element={<Login />} />
-          <Route path='/crear' element={
-            <CrearRestaurante
-              state={state}
-              setState={setState}
-              agregarRestaurante={agregarRestaurante}
-            />
-          }
+          {/* Ruta pública - Login */}
+          <Route path="/" element={<Login />} />
+
+          {/* Rutas protegidas solo para Administradores */}
+          <Route
+            path="/inicio"
+            element={
+              <ProtectedRoute allowedRoles={['Administrador']}>
+                <Inicio />
+              </ProtectedRoute>
+            }
           />
+
+          <Route
+            path='/crear'
+            element={
+              <ProtectedRoute allowedRoles={['Administrador']}>
+                <CrearRestaurante
+                  state={state}
+                  setState={setState}
+                  agregarRestaurante={agregarRestaurante}
+                />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/editRest/:id"
+            element={
+              <ProtectedRoute allowedRoles={['Administrador']}>
+                <EditarRestaurante
+                  state={state}
+                  setState={setState}
+                  editRestaurante={editRestaurante}
+                />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Rutas protegidas solo para Clientes */}
+          <Route
+            path="/inicioUsuario"
+            element={
+              <ProtectedRoute allowedRoles={['Cliente']}>
+                <InicioUsuario />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Rutas protegidas para ambos roles */}
           <Route
             path="/lista"
             element={
-              <ListaRestaurantes
-                restaurantes={restaurantes}
-                eliminarRestaurante={eliminarRestaurante}
-              />
+              <ProtectedRoute allowedRoles={['Administrador', 'Cliente']}>
+                <ListaRestaurantes
+                  restaurantes={restaurantes}
+                  eliminarRestaurante={eliminarRestaurante}
+                  getRestaurante={getRestaurante}
+                />
+              </ProtectedRoute>
             }
-          ></Route>
-          <Route path="/lstRest" element={<LstRestJSon />} />
-          <Route path="/editRest/:id" element=
-            {<EditarRestaurante
-              state={state}
-              setState={setState}
-              editRestaurante={editRestaurante}
-            />
-            } />
+          />
 
+          <Route
+            path="/lstRest"
+            element={
+              <ProtectedRoute allowedRoles={['Administrador', 'Cliente']}>
+                <LstRestJSon />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </div>

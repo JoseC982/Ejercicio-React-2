@@ -1,39 +1,83 @@
-//aqui se va a implementar un middleware de proteccion, control de acceso binario (si tienes el token autorizo, si no mando mensaje: no estas autorizado, si es que si le doy acceso a los endpoints)
+/**
+ * CONFIGURACIÓN E IMPORTACIONES
+ */
+require("dotenv").config();                     // Cargar variables de entorno
+const jwt = require('jsonwebtoken');            // Librería para manejo de JWT
+const User = require('../models/usuario.model'); // Modelo de usuarios
 
-
-//next es un metodo, cuando lo invocamos, decimos continua a ejecutar el siguiente controlador 
-
-// si inicia con bearer es un token al portador
-
-// ver si la cabecera tiene una cabecera de autorizacion con un token
-// luego ver si la cabecera tiene el formato bearer token
-
-require("dotenv").config();
-const jwt = require('jsonwebtoken');
-const User = require('../models/user.model');
-
-// Aqui se hace la validacion del token
+/**
+ * MIDDLEWARE PRINCIPAL DE PROTECCIÓN
+ * Verifica que el usuario tenga un token JWT válido
+ * Extrae la información del usuario y la adjunta a la request
+ */
 module.exports.protect = async (req, res, next) => {
+    console.log('🔍 MIDDLEWARE PROTECT - INICIANDO');
+    console.log('Headers de authorization:', req.headers.authorization);
+    
     let token;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
-            //se obtiene el token (p.ej., Bearer DJDHFHFHHFHFHF#%>%)
-            token = req.headers.authorization;
-            console.log('Token recibido-con Bearer: ', token);
-            token = token.split(' ')[1];
+            token = req.headers.authorization.split(' ')[1];
             console.log('Token extraído: ', token);
-            //se verifica el token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);      // verifica si el token no ha sido modificado y que coincide con la firma del servidor
-            //agregamos a cada petición información del usuario - excepto el password (recuperado con base en el _id //contenido en el payload del token)
-            req.user = await User.findOne({ _id: decoded.id }).select('-password'); // aqui se esta creando un usuario en el middleware, con la informacion del usuario a excepcion del password, se busca mediante el id que se obtiene del token
-            //se continua con la ejecución del siguiente controlador
-            next();
+            
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            console.log('Token decodificado:', decoded); // Para verificar que incluye el id
+            
+            // Buscar usando _id (como está en tu modelo)
+            req.user = await User.findOne({
+                where: { _id: decoded.id }, // decoded.id contiene el _id del usuario
+                attributes: { exclude: ['password'] } // Cambiar 'pass' por 'password'
+            });
+            console.log('Usuario encontrado:', req.user?._id, req.user?.rol);
+            
+            if (req.user) {
+                console.log('✅ MIDDLEWARE PROTECT - USUARIO VÁLIDO, CONTINUANDO');
+                next();
+            } else {
+                console.log('❌ MIDDLEWARE PROTECT - USUARIO NO ENCONTRADO');
+                res.status(401).json({ message: 'User not found!' });
+            }
+            
         } catch (error) {
+            console.log('❌ MIDDLEWARE PROTECT - ERROR:', error.message);
             res.status(401).json({ message: 'Not authorized!' });
         }
-    }
-    //si no se tiene un token de portador, entonces no estará autorizado
-    if (!token) {
+    } else {
+        console.log('❌ MIDDLEWARE PROTECT - SIN TOKEN');
         res.status(401).json({ message: 'Not authorized, missed token!' });
     }
 }
+
+// Corregir adminOnly
+module.exports.adminOnly = (req, res, next) => {
+    if (req.user && req.user.rol === 'Administrador') { // Cambiar role por rol
+        next();
+    } else {
+        res.status(403).json({ message: 'Requiere acceso de administrador!' });
+    }
+};
+
+// Corregir validateOwnResource
+module.exports.validateOwnResource = (req, res, next) => {
+    try {
+        const userIdFromToken = req.user._id;          // Cambiar id por _id
+        const userIdFromParams = parseInt(req.params.id);
+
+        if (req.user.rol === 'Administrador') {        // Cambiar role por rol
+            return next();
+        }
+
+        if (userIdFromToken === userIdFromParams) {
+            return next();
+        }
+
+        return res.status(403).json({
+            error: "Al parecer la información que usted desea editar no le pertenece"
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            error: "Error interno del servidor"
+        });
+    }
+};
