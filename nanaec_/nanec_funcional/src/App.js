@@ -3,6 +3,7 @@ import './App.css';
 import ListaRestaurantes from "./Componentes/ListaRestaurantes";
 import CrearRestaurante from "./Componentes/CrearRestaurante";
 import ComponenteAxios from './Componentes/ComponeteAxios';
+import Login from './Componentes/Login';
 import Inicio from './Componentes/Inicio';
 import EditarRestaurante from './Componentes/EditarRestaurante';
 import React, { useState, useEffect } from 'react';
@@ -62,6 +63,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Inicio />} />
+          <Route path="/login" element={<Login />} />
           <Route path='/crear' element={
             <CrearRestaurante
               state={state}
